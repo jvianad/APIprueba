@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "persona")
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Data
 public class Persona extends Base {
     @Column
     private String nombre;
@@ -17,28 +19,15 @@ public class Persona extends Base {
     private String apellido;
     @Column
     private int dni;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_domicilio")
+    private Domicilio domicilio;
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public int getDni() {
-        return dni;
-    }
-
-    public void setDni(int dni) {
-        this.dni = dni;
-    }
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+            name = "persona_libro",
+            joinColumns = @JoinColumn(name = "persona_id"),
+            inverseJoinColumns = @JoinColumn(name = "libro_id")
+    )
+    private List<Libro> libros = new ArrayList<>();
 }
